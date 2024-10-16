@@ -20,7 +20,7 @@
 #include "ttltrack.h"
 #include "blackwhitelist.h"
 #include "fakepackets.h"
-
+int (*debugPrint)(char const *const _Format, ...) = NULL;
 // My mingw installation does not load inet_pton definition for some reason
 WINSOCK_API_LINKAGE INT WSAAPI inet_pton(INT Family, LPCSTR pStringBuf, PVOID pAddr);
 
@@ -193,6 +193,7 @@ static struct option long_options[] = {
     {"fake-gen",    required_argument, 0,  'j' },
     {"fake-resend", required_argument, 0,  't' },
     {"debug-exit",  optional_argument, 0,  'x' },
+    {"debug-log",  optional_argument,  0,  'l' },
     {0,             0,                 0,   0  }
 };
 
@@ -971,6 +972,10 @@ int main(int argc, char *argv[]) {
             case 'x': // --debug-exit
                 debug_exit = true;
                 break;
+            case 'l':
+                debugPrint = &printf;
+                debug("Testing debug output\n"); 
+                break;   
             default:
                 puts("Usage: goodbyedpi.exe [OPTION...]\n"
                 " -p          block passive DPI\n"
